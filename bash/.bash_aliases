@@ -16,6 +16,7 @@ alias xx="exit"
 
 # SSH
 alias luna='ssh luna'
+alias pablo='ssh pablo'
 alias rpi='ssh rpi'
 alias white='ssh whiterose'
 alias whiterose='ssh whiterose'
