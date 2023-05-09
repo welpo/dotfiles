@@ -30,7 +30,12 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 export EDITOR=vim
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
-export GPG_TTY=$(tty)
-gpgconf --launch gpg-agent
+if command -v brew &>/dev/null; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+if command -v gpg &>/dev/null; then
+  export GPG_TTY=$(tty)
+  gpgconf --launch gpg-agent &>/dev/null
+fi
