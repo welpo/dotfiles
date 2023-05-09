@@ -1,0 +1,16 @@
+# Search through command history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+set editing-mode vi
+
+set completion-ignore-case on
+set show-all-if-ambiguous on
+TAB: menu-complete
+
+# Allow Shift+Tab to go backwards
+"\e[Z": menu-complete-backward
+
+# Map (UTF-8) non-breaking space to regular space, in case the user
+# accidentally types Option-Space when they meant Space.
+"\xC2\xA0": " "
