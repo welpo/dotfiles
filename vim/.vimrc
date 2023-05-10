@@ -70,7 +70,20 @@ set wildmode=list:longest,list:full
 set wrap
 set wrapmargin=0
 
-" Use an alternative directory for .swp files
+" Create backup, swap and undo directories if they don't exist
+if !isdirectory(expand('~/.vim/backup'))
+    silent! execute '!mkdir -p ~/.vim/backup'
+endif
+
+if !isdirectory(expand('~/.vim/swap'))
+    silent! execute '!mkdir -p ~/.vim/swap'
+endif
+
+if !isdirectory(expand('~/.vim/undo'))
+    silent! execute '!mkdir -p ~/.vim/undo'
+endif
+
+" Set backup, swap and undo directories
 set backupdir=~/.vim/backup//
 set directory=~/.vim/swap//
 set undodir=~/.vim/undo//
