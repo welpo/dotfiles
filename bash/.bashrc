@@ -6,7 +6,7 @@ export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.6/bin:$PATH"
 export PATH="$HOME/Library/Python/3.7/bin:$PATH"
 
-if [ -f ~/bin/sensible.bash ]; then
+if [[ $- =~ "i" ]] && [ -f ~/bin/sensible.bash ]; then
     source ~/bin/sensible.bash
 fi
 
