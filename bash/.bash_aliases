@@ -1,6 +1,7 @@
 alias aliases='vim "${HOME}"/.bash_aliases'
 alias bnew='brew update && brew upgrade && brew cleanup'
 alias c='clear'
+alias c.='code .'
 alias cdc='cd && clear'
 alias cp='rsync -avz'
 alias cwd="pwd && pwd | pbcopy && echo 'Copied!'"
@@ -30,6 +31,7 @@ alias dtop='cd "$HOME/Desktop"'
 alias mu='cd "/Volumes/12TB/Music"'
 alias sea='cd "$HOME/Seafile/"'
 alias wel='cd ~/Documents/Web/welpo.oooo/'
+alias osc='cd ~/Documents/Web/osc.garden/'
 alias tabi='cd ~/Documents/Web/tabi/'
 
 # Useful info
