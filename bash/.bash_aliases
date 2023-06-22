@@ -1,11 +1,12 @@
 alias aliases='vim "${HOME}"/.bash_aliases'
 alias bnew='brew update && brew upgrade && brew cleanup'
-alias c='clear'
 alias c.='code .'
+alias c='clear'
 alias cdc='cd && clear'
 alias cp='rsync -avz'
 alias cwd="pwd && pwd | pbcopy && echo 'Copied!'"
 alias mkdir='mkdir -pv'
+alias mm='micromamba'
 alias o='open .'
 alias op='oxipng -o max'
 alias pip='pip3'
@@ -14,6 +15,7 @@ alias ta="tmux attach"
 alias v='vim'
 alias vd='vimdiff'
 alias xx="exit"
+alias zs="zola serve"
 
 # SSH
 alias luna='ssh luna'
