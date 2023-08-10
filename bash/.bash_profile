@@ -20,6 +20,9 @@ source_if_exists "$HOME/.cargo/env"
 #     tmux attach || tmux
 # fi
 
+# Add Homebrew's bin directory to PATH.
+export PATH="/opt/homebrew/bin:$PATH"
+
 # Homebrew setup.
 if command -v brew &>/dev/null; then
     eval "$(brew shellenv)"
