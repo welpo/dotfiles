@@ -4,7 +4,7 @@ source_if_exists() {
 }
 
 # Setting PATH.
-export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # Locale settings.
 export LC_ALL=en_GB.UTF-8
