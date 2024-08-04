@@ -21,20 +21,22 @@ alias zs="zola serve"
 alias luna='ssh luna'
 alias pablo='ssh pablo'
 alias rpi='ssh rpi'
-alias white='ssh whiterose'
-alias whiterose='ssh whiterose'
 
 # cd into stuff
 alias b='cd $HOME/bin'
+alias bun='cd ~/git/bunbu/'
 alias d='cd "$HOME"/Downloads/'
+alias dis="cd $HOME/git/distrokid"
 alias doc='cd "$HOME"/Documents/'
+alias dot='cd ~/git/doteki/'
 alias dt='cd "$HOME/Desktop"'
 alias dtop='cd "$HOME/Desktop"'
+alias g='cd ${HOME}/git'
 alias mu='cd "/Volumes/12TB/Music"'
+alias osc='cd ~/git/osc.garden/'
 alias sea='cd "$HOME/Seafile/"'
-alias wel='cd ~/Documents/Web/welpo.oooo/'
-alias osc='cd ~/Documents/Web/osc.garden/'
-alias tabi='cd ~/Documents/Web/tabi/'
+alias sumi='cd ~/git/git-sumi/'
+alias tabi='cd ~/git/tabi/'
 
 # Useful info
 alias myip="curl ipecho.net/plain;echo | pbcopy"
