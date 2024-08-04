@@ -2,7 +2,8 @@
 set nocompatible
 syntax enable
 
-colorscheme hipster
+" colorscheme hipster
+colorscheme habamax
 
 " Install vim-plug
 let data_dir = '~/.vim'
