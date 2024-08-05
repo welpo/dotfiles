@@ -23,6 +23,7 @@ alias pablo='ssh pablo'
 alias rpi='ssh rpi'
 
 # cd into stuff
+alias a='cd "$HOME/Library/Application Support/Anki2/osc/collection.media"'
 alias b='cd $HOME/bin'
 alias bun='cd ~/git/bunbu/'
 alias d='cd "$HOME"/Downloads/'
