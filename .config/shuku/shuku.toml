@@ -1,0 +1,105 @@
+# shuku ~ configuration file
+# https://github.com/welpo/shuku
+
+# This file uses TOML format: https://toml.io/
+# Lines starting with '#' are comments and are ignored.
+# When adding keys, pay attention to which TOML section it belongs to.
+# A TOML section starts with a header like [condensed_audio] and ends at the next section/end of file.
+
+
+# Logging level. Only messages of the selected level or higher will be displayed.
+# Choices: debug, info, success, warning, error, critical
+loglevel = 'info'
+
+# Whether to clean output filenames by removing release tags, quality indicators, etc. If 'false', the original filename is used.
+clean_output_filename = true
+
+# Directory to save output files. Defaults to the same directory as the input file.
+output_directory = '~/Desktop/condensed'
+
+# Suffix to add to output filenames.
+output_suffix = ''
+
+# What to do when output file exists.
+# Choices: ask, overwrite, rename, skip
+if_file_exists = 'overwrite'
+
+# Padding in seconds to add before and after each subtitle.
+padding = 0.5
+
+# Directory to search for external subtitle files. Overridden by the --subtitles argument.
+subtitle_directory = '~/Documents/Subtitles'
+
+# Automatically select audio tracks with these languages (in order of preference).
+audio_languages = ['jpn', 'jp', 'ja', 'eng']
+
+# Automatically select subtitle tracks with these languages (in order of preference).
+subtitle_languages = ['jpn', 'jp', 'ja', 'eng']
+
+# Method for finding external subtitles. 'disabled' turns off external subtitle search. 'exact' requires a perfect match, while 'fuzzy' allows for inexact matches.
+# Choices: disabled, exact, fuzzy
+external_subtitle_search = 'fuzzy'
+
+# Minimum similarity score (0 to 1) for matching subtitles. Lower values allow for more lenient matching, but risk false positives.
+subtitle_match_threshold = 0.65
+
+# List of chapter titles to skip (case-insensitive).
+skip_chapters = ['avant', 'avante', 'closing credits', 'credits', 'ed', 'end credit', 'end credits', 'ending', 'logos/opening credits', 'next episode', 'op', '1. opening credits', 'opening titles', 'opening', 'preview', 'start credit', 'trailer']
+
+# Regex patterns for lines to skip in subtitles. Use single-quoted strings.
+line_skip_patterns = [
+    '^(～|〜)?♪.*',
+    '^♬(～|〜)$',
+    '^♪?(～|〜)♪?$',
+    '^・(～|〜)$',
+    '^\\([^)]*\\)$',
+    '^（[^）]*）$',
+    '^\\[.*\\]$',
+    '^\\{[^\\}]*\\}$',
+    '^<[^>]*>$',
+]
+
+
+[condensed_audio]
+# Create condensed audio.
+enabled = true
+
+# Condensed audio codec.
+# Choices: libmp3lame, aac, libopus, flac, pcm_s16le, copy, mp3 (alias for libmp3lame), wav (alias for pcm_s16le), opus (alias for libopus), ogg (alias for libopus)
+audio_codec = 'mp3'
+
+# Audio quality for condensed audio. See https://github.com/welpo/shuku?tab=readme-ov-file#audio-quality-settings
+audio_quality = 'v6'
+
+# Custom FFmpeg arguments for condensed audio.
+custom_ffmpeg_args = { "af" = 'loudnorm=I=-16:TP=-1:LRA=13,acompressor=threshold=-14dB:ratio=1.8:attack=30:release=300' }
+
+
+[condensed_video]
+# Create condensed video.
+enabled = false
+
+# Audio codec for condensed video.
+# Choices: libmp3lame, aac, libopus, flac, pcm_s16le, copy, mp3 (alias for libmp3lame), wav (alias for pcm_s16le), opus (alias for libopus), ogg (alias for libopus)
+audio_codec = 'copy'
+
+# Audio quality for condensed video. See https://github.com/welpo/shuku?tab=readme-ov-file#audio-quality-settings
+# audio_quality = '48k'
+
+# Video codec for condensed video.
+video_codec = 'copy'
+
+# Video quality for condensed video (for x264, lower is better quality; 'copy' ignores this).
+# video_quality = '23'
+
+# Custom FFmpeg arguments for condensed video.
+# custom_ffmpeg_args = { "preset" = 'faster', "crf" = '23', "threads" = '0', "tune" = 'film' }
+
+
+[condensed_subtitles]
+# Create condensed subtitles.
+enabled = true
+
+# Output format for subtitles. 'auto' matches the input format.
+# Choices: auto, srt, ass, lrc
+format = 'lrc'
