@@ -3,6 +3,21 @@ hs.window.animationDuration = 0
 local cmdCtrl = {"cmd", "ctrl"}
 local COMFORTABLE_WIDTH_RATIO = 0.65  -- 65% of screen width.
 local COMFORTABLE_HEIGHT_RATIO = 0.80  -- 80% of screen height.
+local quickOpen = {
+    -- Folder shortcuts.
+    {mods = {"cmd", "shift"}, key = "D", action = function() os.execute("open ~/Desktop") end},
+    {mods = {"cmd", "shift"}, key = "J", action = function() os.execute("open ~/Downloads") end},
+
+    -- App shortcuts.
+    {mods = cmdCtrl, key = "N", app = "Notes"},
+    {mods = cmdCtrl, key = "D", app = "DataGrip"},
+    {mods = cmdCtrl, key = "V", app = "Visual Studio Code"},
+    {mods = cmdCtrl, key = "S", app = "Slack"},
+    {mods = cmdCtrl, key = "B", app = "Firefox"},
+    {mods = cmdCtrl, key = "R", app = "Reminders"},
+    {mods = cmdCtrl, key = "M", app = "Mail"},
+    {mods = {"cmd", "shift"}, key = "return", app = "Terminal"}
+}
 
 -- Initialise window switcher.
 local switcher = hs.window.switcher.new(
@@ -77,10 +92,6 @@ function comfortableMaximize()
     win:setFrame(newFrame)
 end
 
-function openTerminal()
-    hs.application.launchOrFocus("Terminal")
-end
-
 function moveWindowToHalf(direction)
     local win = hs.window.focusedWindow()
     if not win then return end
@@ -121,13 +132,15 @@ hs.hotkey.bind(cmdCtrl, "E", comfortableMaximize)
 hs.hotkey.bind("alt", "tab", function() switcher:next() end)
 hs.hotkey.bind({"alt", "shift"}, "tab", function() switcher:previous() end)
 -- Open stuff.
-hs.hotkey.bind({"cmd", "shift"}, "return", openTerminal)
-hs.hotkey.bind({"cmd", "shift"}, "D", function()
-    os.execute("open ~/Desktop")
-end)
-hs.hotkey.bind({"cmd", "shift"}, "J", function()
-    os.execute("open ~/Downloads")
-end)
+for _, shortcut in ipairs(quickOpen) do
+    if shortcut.app then
+        hs.hotkey.bind(shortcut.mods, shortcut.key, function()
+            hs.application.launchOrFocus(shortcut.app)
+        end)
+    else
+        hs.hotkey.bind(shortcut.mods, shortcut.key, shortcut.action)
+    end
+end
 -- Media controls.
 hs.hotkey.bind({"cmd"}, "F11", function()
     hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
