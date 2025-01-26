@@ -16,7 +16,8 @@ local quickOpen = {
     {mods = cmdCtrl, key = "B", app = "Firefox"},
     {mods = cmdCtrl, key = "R", app = "Reminders"},
     {mods = cmdCtrl, key = "M", app = "Mail"},
-    {mods = {"cmd", "shift"}, key = "return", app = "Terminal"}
+    {mods = {"cmd", "shift"}, key = "return", app = "Terminal"},
+    {mods = cmdCtrl, key = "P", app = "System Preferences"},
 }
 
 -- Initialise window switcher.
@@ -120,6 +121,14 @@ function moveWindowToHalf(direction)
     win:setFrame(newFrame)
 end
 
+-- Type clipboard.
+function typeFromClipboard()
+    local contents = hs.pasteboard.getContents()
+    if contents then
+        hs.eventtap.keyStrokes(contents)
+    end
+end
+
 -- Keyboard shortcuts.
 -- Window management.
 hs.hotkey.bind(cmdCtrl, "C", centerWindowInScreen)
@@ -131,6 +140,8 @@ hs.hotkey.bind(cmdCtrl, "down", function() moveWindowToHalf("down") end)
 hs.hotkey.bind(cmdCtrl, "E", comfortableMaximize)
 hs.hotkey.bind("alt", "tab", function() switcher:next() end)
 hs.hotkey.bind({"alt", "shift"}, "tab", function() switcher:previous() end)
+hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
+hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 -- Open stuff.
 for _, shortcut in ipairs(quickOpen) do
     if shortcut.app then
