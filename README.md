@@ -7,7 +7,7 @@ My dotfiles. Managed with [GNU Stow](https://www.gnu.org/software/stow/).
 ### Full setup (new server)
 
 ```bash
-sudo apt install stow && cd && rm .bashrc && git clone https://github.com/welpo/dotfiles.git && cd dotfiles && stow *
+sudo apt install stow && cd && rm .bashrc && git clone https://github.com/welpo/dotfiles.git && cd dotfiles && stow -t ~ */
 ```
 
 ### Manual installation
