@@ -26,24 +26,27 @@ local function getTextSelection()
     end
 end
 
+-- Based on APA rules.
 local doNotCapitalize = {
     -- Articles.
-    ["a"] = true, ["an"] = true, ["the"] = true,
+    "a", "an", "the",
 
-    -- Coordinating conjunctions.
-    ["and"] = true, ["but"] = true, ["or"] = true,
-    ["nor"] = true, ["so"] = true, ["yet"] = true,
+    -- Short coordinating conjunctions.
+    "and", "but", "or", "nor", "so", "yet", "for",
 
-    -- Prepositions of three letters or fewer.
-    ["at"] = true, ["by"] = true, ["for"] = true,
-    ["in"] = true, ["of"] = true, ["off"] = true,
-    ["on"] = true, ["out"] = true, ["to"] = true,
-    ["up"] = true, ["via"] = true,
+    -- Short subordinating conjunctions.
+    "as", "if",
 
-    -- Other common prepositions that APA doesn't capitalise.
-    ["into"] = true, ["onto"] = true, ["than"] = true,
-    ["from"] = true, ["down"] = true, ["with"] = true
+    -- Short prepositions.
+    "at", "by", "for", "in", "of", "off", "on", "out",
+    "per", "to", "up", "via", "re", "vs"
 }
+
+-- Convert list to lookup table for faster checking.
+local doNotCapitalizeMap = {}
+for _, word in ipairs(doNotCapitalize) do
+    doNotCapitalizeMap[word] = true
+end
 
 local function toTitleCase()
     local text = getTextSelection()
@@ -67,7 +70,7 @@ local function toTitleCase()
             local parts = {}
             for part in string.gmatch(word, "[^-]+") do
                 local lowerPart = string.lower(part)
-                if isFirstWord or isAfterColon or not doNotCapitalize[lowerPart] or #lowerPart >= 4 then
+                if isFirstWord or isAfterColon or not doNotCapitalizeMap[lowerPart] or #lowerPart >= 4 then
                     table.insert(parts, string.upper(string.sub(lowerPart, 1, 1)) .. string.sub(lowerPart, 2))
                 else
                     table.insert(parts, lowerPart)
@@ -76,7 +79,7 @@ local function toTitleCase()
             processedWord = table.concat(parts, "-")
         else
             -- Normal word processing.
-            if isFirstWord or isAfterColon or not doNotCapitalize[lowerWord] or #lowerWord >= 4 then
+            if isFirstWord or isAfterColon or not doNotCapitalizeMap[lowerWord] or #lowerWord >= 4 then
                 processedWord = string.upper(string.sub(lowerWord, 1, 1)) .. string.sub(lowerWord, 2)
             else
                 processedWord = lowerWord
