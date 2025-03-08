@@ -37,7 +37,7 @@ local o = {
     add_chapter_placeholder_title = "Chapter ",
 	-----Auto-Skip Settings-----
     autoskip_chapter = true,
-	autoskip_countdown = 0,
+	autoskip_countdown = 2,
 	autoskip_countdown_bulk = false,
 	autoskip_countdown_graceful = false,
     skip_once = false,
