@@ -141,7 +141,6 @@ hs.hotkey.bind(cmdCtrl, "E", comfortableMaximize)
 hs.hotkey.bind("alt", "tab", function() switcher:next() end)
 hs.hotkey.bind({"alt", "shift"}, "tab", function() switcher:previous() end)
 hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
-hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 -- Open stuff.
 for _, shortcut in ipairs(quickOpen) do
     if shortcut.app then
@@ -178,6 +177,19 @@ function reloadConfig(files)
         hs.reload()
     end
 end
+
+-- Enable natural scrolling in macOS Preferences.
+reverse_mouse_scroll = hs.eventtap.new({hs.eventtap.event.types.scrollWheel}, function(event)
+    -- detect if this is touchpad or mouse
+    local isTrackpad = event:getProperty(hs.eventtap.event.properties.scrollWheelEventIsContinuous)
+    if isTrackpad == 1 then
+        return false -- trackpad: pass the event along
+    end
+
+    event:setProperty(hs.eventtap.event.properties.scrollWheelEventDeltaAxis1,
+        -event:getProperty(hs.eventtap.event.properties.scrollWheelEventDeltaAxis1))
+    return false -- pass the event along
+end):start()
 
 local configWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 hs.alert.show("hammerspoon config loaded")
