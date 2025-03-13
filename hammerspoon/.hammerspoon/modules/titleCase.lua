@@ -19,11 +19,7 @@ local function getTextSelection()
     hs.eventtap.keyStroke({"cmd"}, "c")
     local text = hs.pasteboard.getContents()
     hs.pasteboard.setContents(oldText)
-    if text ~= oldText then
-        return text
-    else
-        return ""
-    end
+    return text
 end
 
 -- Based on APA rules.
