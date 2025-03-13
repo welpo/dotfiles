@@ -5,6 +5,7 @@ alias c='clear'
 alias cdc='cd && clear'
 alias cp='rsync -avz'
 alias cwd="pwd && pwd | pbcopy && echo 'Copied!'"
+alias dp='vim -c "set noswapfile" -c "vnew" -c "windo setlocal nobuflisted buftype=nofile noswapfile" -c "set diffopt=filler,iwhite" -c "windo diffthis" -c "wincmd h" -c "autocmd TextChanged,TextChangedI * diffupdate"'
 alias mkdir='mkdir -pv'
 alias mm='micromamba'
 alias o='open .'
