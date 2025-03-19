@@ -1,29 +1,8 @@
--- Title Case converter
-
-local function replaceSelectedText(newText)
-    -- Save current clipboard.
-    local oldClipboard = hs.pasteboard.getContents()
-    -- Set new text to clipboard.
-    hs.pasteboard.setContents(newText)
-    -- Paste over selection.
-    hs.eventtap.keyStroke({"cmd"}, "v")
-    -- Restore clipboard after a delay.
-    hs.timer.doAfter(0.1, function()
-        hs.pasteboard.setContents(oldClipboard)
-    end)
-end
-
--- Get currently selected text while preserving clipboard.
-local function getTextSelection()
-    local oldText = hs.pasteboard.getContents()
-    hs.eventtap.keyStroke({"cmd"}, "c")
-    local text = hs.pasteboard.getContents()
-    hs.pasteboard.setContents(oldText)
-    return text
-end
+-- Title Case converter.
+local textUtils = require("modules/textUtils")
 
 -- Based on APA rules.
-local doNotCapitalize = {
+local doNotCapitalise = {
     -- Articles.
     "a", "an", "the",
 
@@ -39,13 +18,13 @@ local doNotCapitalize = {
 }
 
 -- Convert list to lookup table for faster checking.
-local doNotCapitalizeMap = {}
-for _, word in ipairs(doNotCapitalize) do
-    doNotCapitalizeMap[word] = true
+local doNotCapitaliseMap = {}
+for _, word in ipairs(doNotCapitalise) do
+    doNotCapitaliseMap[word] = true
 end
 
 local function toTitleCase()
-    local text = getTextSelection()
+    local text = textUtils.getTextSelection()
     if not text or text == "" then return end
 
     -- Split by spaces, process, then join.
@@ -66,7 +45,7 @@ local function toTitleCase()
             local parts = {}
             for part in string.gmatch(word, "[^-]+") do
                 local lowerPart = string.lower(part)
-                if isFirstWord or isAfterColon or not doNotCapitalizeMap[lowerPart] or #lowerPart >= 4 then
+                if isFirstWord or isAfterColon or not doNotCapitaliseMap[lowerPart] or #lowerPart >= 4 then
                     table.insert(parts, string.upper(string.sub(lowerPart, 1, 1)) .. string.sub(lowerPart, 2))
                 else
                     table.insert(parts, lowerPart)
@@ -75,7 +54,7 @@ local function toTitleCase()
             processedWord = table.concat(parts, "-")
         else
             -- Normal word processing.
-            if isFirstWord or isAfterColon or not doNotCapitalizeMap[lowerWord] or #lowerWord >= 4 then
+            if isFirstWord or isAfterColon or not doNotCapitaliseMap[lowerWord] or #lowerWord >= 4 then
                 processedWord = string.upper(string.sub(lowerWord, 1, 1)) .. string.sub(lowerWord, 2)
             else
                 processedWord = lowerWord
@@ -90,7 +69,7 @@ local function toTitleCase()
         isAfterColon = endsWithColon
     end
 
-    replaceSelectedText(result)
+    textUtils.replaceSelectedText(result)
 end
 
 hs.hotkey.bind({"cmd", "alt"}, "T", toTitleCase)

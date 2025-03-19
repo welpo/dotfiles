@@ -3,8 +3,10 @@ cmdCtrl = {"cmd", "ctrl"}
 
 require("modules/caffeine")
 require("modules/scrolling")
-require("modules/shortcuts")
+require("modules/sentenceCase")
+require("modules/lowerCase")
 require("modules/titleCase")
+require("modules/shortcuts")
 require("modules/window")
 
 -- Auto-reload config on changes.
