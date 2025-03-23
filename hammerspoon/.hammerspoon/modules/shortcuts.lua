@@ -6,7 +6,7 @@ local quickOpen = {
     {mods = {"cmd", "shift"}, key = "J", action = function() os.execute("open ~/Downloads") end},
 
     -- App shortcuts.
-    {mods = cmdCtrl, key = "N", app = "Notes"},
+    {mods = cmdCtrl, key = "N", app = "Anytype"},
     {mods = cmdCtrl, key = "D", app = "DataGrip"},
     {mods = cmdCtrl, key = "V", app = "Visual Studio Code"},
     {mods = cmdCtrl, key = "S", app = "Slack"},
