@@ -1,5 +1,5 @@
 -- Title Case converter.
-local textUtils = require("modules/textUtils")
+local textUtils = require("modules/utils/textUtils")
 
 -- Based on APA rules.
 local doNotCapitalise = {

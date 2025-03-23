@@ -1,5 +1,5 @@
 -- Sentence Case converter.
-local textUtils = require("modules/textUtils")
+local textUtils = require("modules/utils/textUtils")
 
 local function toSentenceCase()
     local text = textUtils.getTextSelection()

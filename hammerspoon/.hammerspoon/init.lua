@@ -2,12 +2,18 @@ hs.window.animationDuration = 0
 cmdCtrl = {"cmd", "ctrl"}
 
 require("modules/caffeine")
+require("modules/lowerCase")
+require("modules/upperCase")
+require("modules/openAdmin")
 require("modules/scrolling")
 require("modules/sentenceCase")
-require("modules/lowerCase")
-require("modules/titleCase")
 require("modules/shortcuts")
+require("modules/titleCase")
 require("modules/window")
+-- MODE Report Finder
+MODE_CACHE_FILE="/tmp/mode_reports_cache.json"
+local modeReportFinder = require("modules/mode/reportFinder")
+local modeCacheBuilder = require("modules/mode/cacheBuilder")
 
 -- Auto-reload config on changes.
 function reloadConfig(files)
@@ -34,3 +40,11 @@ function typeFromClipboard()
 end
 
 hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
+
+hs.hotkey.bind({"cmd", "shift"}, "M", modeReportFinder.showFinder)
+-- Refresh MODE cache every 2 hours.
+local updateTimer = modeCacheBuilder.setupPeriodicUpdates(2)
+-- Force cache rebuild.
+hs.hotkey.bind({"cmd", "shift", "ctrl"}, "M", function()
+    modeCacheBuilder.updateCache()
+end)
