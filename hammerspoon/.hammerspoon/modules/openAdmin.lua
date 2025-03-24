@@ -26,22 +26,24 @@ function openAdminWithId()
     -- Save original clipboard content.
     local originalClipboard = hs.pasteboard.getContents()
     local id = nil
+    local source = nil
 
-    -- Does clipboard contain a number?
-    if originalClipboard and string.match(originalClipboard, "^%d+$") then
+    -- Check if selected text contains a number.
+    local selectedText = textUtils.getTextSelection()
+    if selectedText and string.match(selectedText, "^%d+$") then
+        id = selectedText
+        source = "selection"
+    -- If no valid selection, check the clipboard for a number.
+    elseif originalClipboard and string.match(originalClipboard, "^%d+$") then
         id = originalClipboard
-    else
-        local selectedText = textUtils.getTextSelection()
-        if selectedText and string.match(selectedText, "^%d+$") then
-            id = selectedText
-        end
+        source = "clipboard"
     end
 
     if id then
         hs.urlevent.openURL(admin_url .. id)
-        hs.alert.show("Opening admin page for account " .. id)
+        hs.alert.show("Opening admin page for account " .. id .. " (from " .. source .. ")")
     else
-        hs.alert.show("No account ID found in clipboard or selection")
+        hs.alert.show("No account ID found in selection or clipboard")
     end
 
     -- Restore original clipboard after a short delay.
