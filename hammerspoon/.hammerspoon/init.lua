@@ -46,10 +46,14 @@ end
 hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 
 if isWorkComputer then
+    require("modules/identifyFactCSV")
+    hs.hotkey.bind(cmdCtrl, "I", identifyFact)
+    require("modules/formatEpoch")
+    hs.hotkey.bind({"cmd", "ctrl"}, "E", displayDateFromSelection)
     require("modules/openAdmin")
     hs.hotkey.bind({"cmd", "ctrl"}, "A", openAdminWithId)
     -- MODE Report Finder.
-    MODE_CACHE_FILE="/tmp/mode_reports_cache.json"
+    MODE_CACHE_FILE="~/.mode_reports_cache.json"
     require("modules/mode/reportFinder")
     require("modules/mode/cacheBuilder")
     hs.hotkey.bind({"cmd", "shift"}, "M", showModeFinder)
