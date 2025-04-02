@@ -12,6 +12,13 @@ require("modules/shortcuts")  -- keyboard shortcuts.
 require("modules/titleCase")
 require("modules/window")
 
+
+hs.hotkey.bind({"cmd", "ctrl", "shift"}, "C", cycleCaffeineModes)
+hs.hotkey.bind({"cmd", "alt"}, "L", toLowerCase)
+hs.hotkey.bind({"cmd", "alt"}, "S", toSentenceCase)
+hs.hotkey.bind({"cmd", "alt"}, "T", toTitleCase)
+hs.hotkey.bind({"cmd", "alt"}, "U", toUpperCase)
+
 -- Auto-reload config on changes.
 function reloadConfig(files)
     local doReload = false
@@ -40,15 +47,13 @@ hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 
 if isWorkComputer then
     require("modules/openAdmin")
+    hs.hotkey.bind({"cmd", "ctrl"}, "A", openAdminWithId)
     -- MODE Report Finder.
     MODE_CACHE_FILE="/tmp/mode_reports_cache.json"
-    local modeReportFinder = require("modules/mode/reportFinder")
-    local modeCacheBuilder = require("modules/mode/cacheBuilder")
-    hs.hotkey.bind({"cmd", "shift"}, "M", modeReportFinder.showFinder)
-    -- Refresh MODE cache every 2 hours.
-    local updateTimer = modeCacheBuilder.setupPeriodicUpdates(2)
-    hs.hotkey.bind({"cmd", "shift", "ctrl"}, "M", function()
-        modeCacheBuilder.updateCache()
-    end)
+    require("modules/mode/reportFinder")
+    require("modules/mode/cacheBuilder")
+    hs.hotkey.bind({"cmd", "shift"}, "M", showModeFinder)
+    -- Force cache refresh.
+    hs.hotkey.bind({"cmd", "shift", "ctrl"}, "M", updateModeCache)
     print("Loaded work-specific modules")
 end

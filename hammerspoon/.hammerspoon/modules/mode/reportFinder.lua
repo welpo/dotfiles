@@ -1,25 +1,31 @@
--- MODE Report Finder - Spotlight-like search for MODE reports
-local modeReportFinder = {}
+-- MODE Report Finder - Spotlight-like search for MODE reports.
+-- Configuration options:
+-- 1. Set MODE_CACHE_FILE in your init.lua before requiring this module.
+-- 2. Optionally set MODE_SORT_FIELD and MODE_SORT_ORDER for custom sorting.
 
 -- For fuzzy search.
 local fuzzy = require("modules/utils/fuzzy")
 
--- For default sorting, before we search.
-local SORT_FIELD = "lastSavedAt"  -- Options: "editedAt", "updatedAt", "createdAt", "lastSavedAt"
-local SORT_ORDER = "desc"      -- Options: "desc", "asc"
+-- Default configuration.
+MODE_SORT_FIELD = MODE_SORT_FIELD or "lastSavedAt"  -- Options: "editedAt", "updatedAt", "createdAt", "lastSavedAt".
+MODE_SORT_ORDER = MODE_SORT_ORDER or "desc"         -- Options: "desc", "asc".
 
 -- Cache setup.
 local reportCache = nil
 local lastCacheTime = 0
-local CACHE_LIFETIME = 3600 -- 1 hour cache lifetime
-
+local CACHE_LIFETIME = 3600 -- 1 hour cache lifetime.
 
 local function loadCacheFromDisk()
     local startTime = hs.timer.secondsSinceEpoch()
 
+    if not MODE_CACHE_FILE then
+        print("No MODE_CACHE_FILE configured.")
+        return nil
+    end
+
     local cacheFile = io.open(MODE_CACHE_FILE, "r")
     if not cacheFile then
-        print("No cache file found")
+        print("No cache file found.")
         return nil
     end
 
@@ -30,7 +36,7 @@ local function loadCacheFromDisk()
     local readTime = hs.timer.secondsSinceEpoch() - startTime
     print(string.format("Read cache file in %.2f seconds", readTime))
 
-    print("Parsing JSON…")
+    print("Parsing JSON...")
     local parseStart = hs.timer.secondsSinceEpoch()
     local success, cache = pcall(function()
         return hs.json.decode(cacheJson)
@@ -40,12 +46,12 @@ local function loadCacheFromDisk()
     print(string.format("Parsed JSON in %.2f seconds", parseTime))
 
     if success and cache and cache.timestamp and cache.reports then
-        print("Loaded cache from disk with " .. #cache.reports .. " reports")
+        print("Loaded cache from disk with " .. #cache.reports .. " reports.")
         local totalTime = hs.timer.secondsSinceEpoch() - startTime
         print(string.format("Total cache load time: %.2f seconds", totalTime))
         return cache
     else
-        print("Failed to parse cache file")
+        print("Failed to parse cache file.")
         return nil
     end
 end
@@ -53,29 +59,29 @@ end
 local function getReportsFromCache()
     local currentTime = os.time()
     if reportCache and (currentTime - lastCacheTime < CACHE_LIFETIME) then
-        print("Using in-memory cache (" .. #reportCache .. " reports)")
+        print("Using in-memory cache (" .. #reportCache .. " reports).")
         return reportCache
     end
     local diskCache = loadCacheFromDisk()
     if diskCache then
         reportCache = diskCache.reports
         lastCacheTime = diskCache.timestamp
-        print("Loaded " .. #reportCache .. " reports from disk cache")
+        print("Loaded " .. #reportCache .. " reports from disk cache.")
         return reportCache
     end
 
     return nil
 end
 
+-- Initialise chooser.
 local chooser = hs.chooser.new(function(selection)
     if selection then
-        local baseUrl = 'https://app.mode.com'
         local reportUrl = selection.reportUrl
         hs.urlevent.openURL(reportUrl)
     end
 end)
 
--- Configure the chooser appearance
+-- Configure the chooser appearance.
 chooser:placeholderText("Search MODE Reports…")
 chooser:searchSubText(true)
 chooser:width(600)
@@ -96,15 +102,14 @@ local function sortReportsByField(choices, field, order)
     return choices
 end
 
-
-function modeReportFinder.showFinder()
+function showModeFinder()
     local reports = getReportsFromCache()
     if not reports or #reports == 0 then
         hs.alert.show("No cached MODE reports found. Please run the cache update.")
         return
     end
 
-    print("Found " .. #reports .. " reports in cache")
+    print("Found " .. #reports .. " reports in cache.")
     local choices = {}
 
     for i, report in ipairs(reports) do
@@ -143,7 +148,7 @@ function modeReportFinder.showFinder()
         })
     end
 
-    sortReportsByField(choices, SORT_FIELD, SORT_ORDER)
+    sortReportsByField(choices, MODE_SORT_FIELD, MODE_SORT_ORDER)
 
     chooser:queryChangedCallback(function(query)
         if query == "" then
@@ -172,5 +177,3 @@ function modeReportFinder.showFinder()
     chooser:choices(choices)
     chooser:show()
 end
-
-return modeReportFinder

@@ -1,7 +1,7 @@
--- Title Case converter.
+-- Title Case converter based on APA rules.
 local textUtils = require("modules/utils/textUtils")
 
--- Based on APA rules.
+-- Words that should not be capitalised in titles.
 local doNotCapitalise = {
     -- Articles.
     "a", "an", "the",
@@ -23,7 +23,7 @@ for _, word in ipairs(doNotCapitalise) do
     doNotCapitaliseMap[word] = true
 end
 
-local function toTitleCase()
+function toTitleCase()
     local text = textUtils.getTextSelection()
     if not text or text == "" then return end
 
@@ -71,5 +71,3 @@ local function toTitleCase()
 
     textUtils.replaceSelectedText(result)
 end
-
-hs.hotkey.bind({"cmd", "alt"}, "T", toTitleCase)

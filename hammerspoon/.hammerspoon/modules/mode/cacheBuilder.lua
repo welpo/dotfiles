@@ -1,17 +1,28 @@
--- MODE Report Cache Builder - Handles API interactions and cache building
-local modeCacheBuilder = {}
-local IMAGE_CACHE_DIR = "/tmp/hammerspoon_mode"
+-- MODE Report Cache Builder - Handles API interactions and cache building.
+-- Configure before requiring:
+-- 1. Set MODE_SECRETS directly in init.lua before requiring, or
+-- 2. Set SECRETS_PATH to customise secrets file location, or
+-- 3. Default: Uses ~/.secrets.lua with MODE credentials
 
--- Load secrets
+-- Configuration constants - can be overridden in init.lua before requiring.
+IMAGE_CACHE_DIR = IMAGE_CACHE_DIR or "/tmp/hammerspoon_mode"
+MODE_CACHE_FILE = MODE_CACHE_FILE or (os.getenv("HOME") .. "/.hammerspoon/mode_cache.json")
+WAIT_SECONDS_BETWEEN_REQUESTS = WAIT_SECONDS_BETWEEN_REQUESTS or 1.0
+
+-- Load secrets.
 local secrets = {}
-do
-    local secretsPath = os.getenv("HOME") .. "/.secrets.lua"
+if not MODE_SECRETS then
+    local secretsPath = SECRETS_PATH or (os.getenv("HOME") .. "/.secrets.lua")
     local chunk, err = loadfile(secretsPath, "t", secrets)
     if chunk then
         chunk()
+        MODE_SECRETS = {
+            mode_workspace = secrets.mode_workspace,
+            mode_api_token = secrets.mode_api_token,
+            mode_api_secret = secrets.mode_api_secret
+        }
     else
         hs.alert.show("Error loading secrets: " .. (err or "unknown error"))
-        return {}
     end
 end
 
@@ -20,8 +31,8 @@ local modeUrl = 'https://app.mode.com'
 -- Rate limiting config.
 local requestQueue = {}
 local isProcessingQueue = false
-local WAIT_SECONDS_BETWEEN_REQUESTS = 1.0
 
+-- Private functions.
 local function processRequestQueue()
     if isProcessingQueue or #requestQueue == 0 then return end
     isProcessingQueue = true
@@ -38,10 +49,16 @@ local function processRequestQueue()
 end
 
 local function queueApiRequest(endpoint, callback)
-    local workspace = secrets.mode_workspace
+    if not MODE_SECRETS or not MODE_SECRETS.mode_workspace then
+        hs.alert.show("MODE credentials not configured.")
+        callback(nil)
+        return
+    end
+
+    local workspace = MODE_SECRETS.mode_workspace
     local url = modeUrl .. "/api/" .. workspace .. endpoint
     -- Authentication.
-    local auth = secrets.mode_api_token .. ":" .. secrets.mode_api_secret
+    local auth = MODE_SECRETS.mode_api_token .. ":" .. MODE_SECRETS.mode_api_secret
     local authBase64 = hs.base64.encode(auth)
     local headers = {["Authorization"] = "Basic " .. authBase64}
     print("Queueing request: " .. url)
@@ -84,9 +101,14 @@ local function queueApiRequest(endpoint, callback)
 end
 
 local function fetchUserDisplayName(username, callback)
+    if not MODE_SECRETS then
+        callback(username)
+        return
+    end
+
     local url = modeUrl .. "/api/" .. username
     -- Authenticate.
-    local auth = secrets.mode_api_token .. ":" .. secrets.mode_api_secret
+    local auth = MODE_SECRETS.mode_api_token .. ":" .. MODE_SECRETS.mode_api_secret
     local authBase64 = hs.base64.encode(auth)
     local headers = {["Authorization"] = "Basic " .. authBase64}
     print("Fetching user details for: " .. username)
@@ -129,7 +151,7 @@ local function fetchSpaces(callback)
             end
             callback(filteredSpaces)
         else
-            print("Error: Could not fetch spaces")
+            print("Error: Could not fetch spaces.")
             callback({})
         end
     end)
@@ -174,7 +196,7 @@ local function downloadImage(url, token, callback)
                         file:close()
                         return true
                     else
-                        return false, "Could not open file for writing"
+                        return false, "Could not open file for writing."
                     end
                 end)
                 if success then
@@ -195,11 +217,6 @@ local function downloadImage(url, token, callback)
             else
                 print("Failed to download image: " .. url)
                 print("Status: " .. status)
-                if headers then
-                    for k, v in pairs(headers) do
-                        print("  " .. k .. ": " .. v)
-                    end
-                end
                 callback(nil)
             end
         end
@@ -238,7 +255,7 @@ local function fetchReportsFromSpace(space, page, allReports, callback)
                         report._links and report._links.creator and report._links.creator.href
                     ),
                     reportUrl = report._links and report._links.web and report._links.web.href or "",
-                    -- Dates for sorting
+                    -- Dates for sorting.
                     createdAt = report.created_at,
                     updatedAt = report.updated_at,  -- refers to a refresh/running queries.
                     editedAt = report.edited_at,
@@ -278,33 +295,34 @@ local function saveCacheToDisk(reports)
         if cacheFile then
             cacheFile:write(cacheJson)
             cacheFile:close()
-            print("Saved cache to disk with " .. #reports .. " reports (optimized size)")
+            print("Saved cache to disk with " .. #reports .. " reports (optimised size).")
         else
-            print("Failed to open cache file for writing")
+            print("Failed to open cache file for writing.")
         end
     else
-        print("Failed to encode cache to JSON")
+        print("Failed to encode cache to JSON.")
     end
 end
 
-function modeCacheBuilder.updateCache()
-    -- Show loading indicator
+-- Global functions.
+function updateModeCache()
+    -- Show loading indicator.
     hs.alert.show("Updating MODE reports cache…")
     if not ensureImageCacheDir() then
-        hs.alert.show("Failed to create image cache directory")
+        hs.alert.show("Failed to create image cache directory.")
         return
     end
 
     fetchSpaces(function(spaces)
         if #spaces == 0 then
-            print("No spaces found in workspace")
-            hs.alert.show("No spaces found in workspace")
+            print("No spaces found in workspace.")
+            hs.alert.show("No spaces found in workspace.")
             return
         end
         local allReports = {}
         local spacesRemaining = #spaces
         local usernameCache = {} -- Cache usernames to display names.
-        local pendingUserFetches = 0 -- Track pending user API calls
+        local pendingUserFetches = 0 -- Track pending user API calls.
 
         local function checkAllDone()
             if spacesRemaining == 0 and pendingUserFetches == 0 then
@@ -315,9 +333,9 @@ function modeCacheBuilder.updateCache()
                         report.creator = usernameCache[username]
                     end
                 end
-                print("Completed fetching all reports (" .. #allReports .. " total) with display names")
+                print("Completed fetching all reports (" .. #allReports .. " total) with display names.")
                 saveCacheToDisk(allReports)
-                hs.alert.show("MODE reports cache updated with " .. #allReports .. " reports")
+                hs.alert.show("MODE reports cache updated with " .. #allReports .. " reports.")
             end
         end
 
@@ -352,15 +370,16 @@ function modeCacheBuilder.updateCache()
     end)
 end
 
-function modeCacheBuilder.setupPeriodicUpdates(intervalHours)
+function setupModePeriodicUpdates(intervalHours)
     intervalHours = intervalHours or 12
     local intervalSeconds = intervalHours * 60 * 60
     local timer = hs.timer.new(intervalSeconds, function()
-        modeCacheBuilder.updateCache()
+        updateModeCache()
     end)
     timer:start()
-    print("Set up automatic cache updates every " .. intervalHours .. " hours")
+    print("Set up automatic cache updates every " .. intervalHours .. " hours.")
     return timer
 end
 
-return modeCacheBuilder
+-- Auto-initialise on require.
+local autoUpdateTimer = setupModePeriodicUpdates(2)

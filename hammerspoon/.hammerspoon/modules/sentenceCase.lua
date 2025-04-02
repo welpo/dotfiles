@@ -1,7 +1,7 @@
 -- Sentence Case converter.
 local textUtils = require("modules/utils/textUtils")
 
-local function toSentenceCase()
+function toSentenceCase()
     local text = textUtils.getTextSelection()
     if not text or text == "" then return end
     local lowerText = string.lower(text)
@@ -35,5 +35,3 @@ local function toSentenceCase()
 
     textUtils.replaceSelectedText(result)
 end
-
-hs.hotkey.bind({"cmd", "alt"}, "S", toSentenceCase)

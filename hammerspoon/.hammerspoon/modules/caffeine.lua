@@ -1,19 +1,26 @@
--- Caffeinate functionality
+-- Caffeine Module for Hammerspoon.
+-- Provides control over display and system sleep behaviour.
+--
+-- Usage:
+--   1. Save this file to ~/.hammerspoon/modules/caffeine.lua
+--   2. In your init.lua:
+--      require("modules/caffeine")
+--      hs.hotkey.bind({"cmd", "ctrl", "shift"}, "C", cycleCaffeineModes)
+
+-- Create menubar item.
 local caffeine = hs.menubar.new()
 local caffeineMode = "off"
 
-function setCaffeineDisplay(mode)
+-- Configure menu bar icon based on current caffeine mode.
+local function setCaffeineDisplay(mode)
     if mode == "off" then
-        -- Hide icon completely when inactive
         caffeine:removeFromMenuBar()
     elseif mode == "screenSaverOnly" then
-        -- Show screen saver icon when in screen saver mode
         if caffeine:isInMenuBar() == false then
             caffeine:returnToMenuBar()
         end
         caffeine:setTitle("🎬")
     elseif mode == "fullyAwake" then
-        -- Show coffee cup icon when fully awake
         if caffeine:isInMenuBar() == false then
             caffeine:returnToMenuBar()
         end
@@ -21,17 +28,15 @@ function setCaffeineDisplay(mode)
     end
 end
 
-function setCaffeineState(mode)
+-- Set system sleep behaviour based on selected mode.
+local function setCaffeineState(mode)
     if mode == "off" then
-        -- Disable all caffeinate modes
         hs.caffeinate.set("displayIdle", false)
         hs.caffeinate.set("systemIdle", false)
     elseif mode == "screenSaverOnly" then
-        -- Allow screen saver but prevent system sleep
         hs.caffeinate.set("displayIdle", false)
         hs.caffeinate.set("systemIdle", true)
     elseif mode == "fullyAwake" then
-        -- Prevent both screen saver and system sleep
         hs.caffeinate.set("displayIdle", true)
         hs.caffeinate.set("systemIdle", true)
     end
@@ -53,9 +58,4 @@ function cycleCaffeineModes()
     end
 end
 
-if caffeine then
-    caffeine:setClickCallback(cycleCaffeineModes)
-    setCaffeineState("off")
-end
-
-hs.hotkey.bind({"cmd", "ctrl", "shift"}, "C", cycleCaffeineModes)
+setCaffeineState("off")
