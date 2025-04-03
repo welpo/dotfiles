@@ -25,7 +25,7 @@ local function loadCacheFromDisk()
 
     local cacheFile = io.open(MODE_CACHE_FILE, "r")
     if not cacheFile then
-        print("No cache file found.")
+        print("No cache file found in" .. MODE_CACHE_FILE)
         return nil
     end
 
