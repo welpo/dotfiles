@@ -3,28 +3,29 @@ cmdCtrl = {"cmd", "ctrl"}
 local hostname = hs.host.localizedName():lower()
 local isWorkComputer = hostname:find("oo") ~= nil
 
+require("modules/shortcuts")  -- keyboard shortcuts.
+require("modules/window")
 require("modules/caffeine")
+hs.hotkey.bind({"cmd", "ctrl", "shift"}, "C", cycleCaffeineModes)
 require("modules/lowerCase")
+hs.hotkey.bind({"cmd", "alt"}, "L", toLowerCase)
 require("modules/scrolling")
 require("modules/sentenceCase")
-require("modules/shortcuts")  -- keyboard shortcuts.
-require("modules/titleCase")
-require("modules/upperCase")
-require("modules/window")
-
-hs.hotkey.bind({"cmd", "ctrl", "shift"}, "C", cycleCaffeineModes)
-hs.hotkey.bind({"cmd", "alt"}, "L", toLowerCase)
 hs.hotkey.bind({"cmd", "alt"}, "S", toSentenceCase)
+require("modules/titleCase")
 hs.hotkey.bind({"cmd", "alt"}, "T", toTitleCase)
+require("modules/upperCase")
 hs.hotkey.bind({"cmd", "alt"}, "U", toUpperCase)
+require("modules/typeFromClipboard")
+hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 
 CSV_PRETTY_STYLE = "simple"
-CSV_ADD_BACKTICKS = true
 CSV_CENTERED = true
 local csvPretty = require("modules/CSVPrettyPrint")
 hs.hotkey.bind({"cmd", "alt"}, "C", csvPretty.formatAndInsertCSV)
 
--- Auto-reload config on changes.
+
+-- Auto-reload config on changes (doesn't always work 😞).
 function reloadConfig(files)
     local doReload = false
     for _, file in pairs(files) do
@@ -40,15 +41,6 @@ end
 local configWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 hs.alert.show("hammerspoon config loaded")
 
--- Type clipboard.
-function typeFromClipboard()
-    local contents = hs.pasteboard.getContents()
-    if contents then
-        hs.eventtap.keyStrokes(contents)
-    end
-end
-
-hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 
 if isWorkComputer then
     require("modules/identifyFactCSV")
