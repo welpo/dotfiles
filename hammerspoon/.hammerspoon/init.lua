@@ -19,10 +19,14 @@ hs.hotkey.bind({"cmd", "alt"}, "U", toUpperCase)
 require("modules/typeFromClipboard")
 hs.hotkey.bind({"cmd", "alt"}, "V", typeFromClipboard)
 
-CSV_PRETTY_STYLE = "simple"
-CSV_CENTERED = true
+CSV_CENTERED = false
 local csvPretty = require("modules/CSVPrettyPrint")
-hs.hotkey.bind({"cmd", "alt"}, "C", csvPretty.formatAndInsertCSV)
+hs.hotkey.bind({"cmd", "alt"}, "C", function()
+    csvPretty.formatAndInsertCSV({style = "simple"})
+end)
+hs.hotkey.bind({"cmd", "alt"}, "M", function()
+    csvPretty.formatAndInsertCSV({style = "markdown"})
+end)
 
 
 -- Auto-reload config on changes (doesn't always work 😞).
