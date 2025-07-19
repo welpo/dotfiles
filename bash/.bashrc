@@ -29,3 +29,6 @@ if [[ $- == *i* ]]; then
     source_if_exists ~/.bash_aliases
     source_if_exists "$HOME/.cargo/env"
 fi
+
+eval "$(/opt/homebrew/bin/uv generate-shell-completion bash)"
+eval "$(/opt/homebrew/bin/uvx --generate-shell-completion bash)"

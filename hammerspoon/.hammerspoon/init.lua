@@ -47,6 +47,8 @@ hs.alert.show("hammerspoon config loaded")
 
 
 if isWorkComputer then
+    require("modules/formatEpoch")
+    hs.hotkey.bind({"cmd", "ctrl"}, "T", displayDateFromSelection)
     require("modules/identifyFactCSV")
     hs.hotkey.bind(cmdCtrl, "I", identifyFact)
     require("modules/formatEpoch")
@@ -61,4 +63,27 @@ if isWorkComputer then
     -- Force cache refresh.
     hs.hotkey.bind({"cmd", "shift", "ctrl"}, "M", updateModeCache)
     print("Loaded work-specific modules")
+end
+
+require("hs.ipc")
+function commandFinished(exitCode)
+    local title, subtitle, soundName
+
+    if exitCode == 0 then
+        title = "✅ Command Completed"
+        soundName = "Glass"
+    else
+        title = "❌ Command Failed"
+        subtitle = "exit code: " .. exitCode
+        soundName = "Basso"
+    end
+
+    hs.notify.new({
+        title = title,
+        subtitle = subtitle,
+        withdrawAfter = 8,
+        hasActionButton = false
+    }):send()
+
+    hs.sound.getByName(soundName):play()
 end
